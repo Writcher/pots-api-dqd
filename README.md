@@ -1,98 +1,125 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# POT API DQD
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API backend para sincronización de campañas, POTs y ensayos desde dispositivos de campo.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Descripción
 
-## Description
+Aplicación backend construida con NestJS 11 que expone servicios de sincronización bidireccional para la app móvil de ensayos POT. Los dispositivos de campo suben y descargan campañas, POTs y ensayos mediante autenticación por API key. Utiliza TypeORM con una conexión a SQL Server.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Stack
 
-## Project setup
+- Node.js 20+
+- NestJS 11
+- TypeScript
+- TypeORM
+- SQL Server (MSSQL)
+- API Key para autenticación
+
+## Requisitos
+
+- Node.js 20+ instalado
+- SQL Server accesible
+- Archivo de variables de entorno `.env` configurado en la raíz
+
+## Setup
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+Duplicar y completar el archivo `.env` con las credenciales reales.
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run build
 ```
 
-## Run tests
+> Este repositorio no incluye un `.env.example`, por lo que debes crear el archivo manualmente.
 
-```bash
-# unit tests
-$ npm run test
+## Variables de entorno
 
-# e2e tests
-$ npm run test:e2e
+| Variable | Descripción |
+|---|---|
+| `DB_HOST` | Host de SQL Server |
+| `DB_PORT` | Puerto de SQL Server |
+| `DB_USERNAME` | Usuario de SQL Server |
+| `DB_PASSWORD` | Contraseña de SQL Server |
+| `DB_NAME` | Base de datos SQL Server |
+| `API_KEY` | Clave de autenticación para los dispositivos |
+| `PORT` | Puerto en el que corre la API (por defecto `3000`) |
 
-# test coverage
-$ npm run test:cov
+## Scripts
+
+| Script | Descripción |
+|---|---|
+| `npm run start` | Iniciar la aplicación en modo producción |
+| `npm run start:dev` | Iniciar en modo desarrollo con watch |
+| `npm run start:debug` | Iniciar en modo debug |
+| `npm run start:prod` | Ejecutar la aplicación compilada |
+| `npm run build` | Compilar el proyecto NestJS |
+| `npm run lint` | Ejecutar ESLint y aplicar correcciones |
+| `npm run test` | Ejecutar tests unitarios |
+| `npm run test:e2e` | Ejecutar e2e tests |
+| `npm run test:cov` | Ejecutar tests y generar cobertura |
+
+## Endpoints
+
+Todos los endpoints requieren el header `x-api-key` con la clave configurada en `.env`.
+
+Base path: `/api/sync`
+
+### Sincronización
+
+- `POST /api/sync/upload` — subir campañas, POTs y ensayos desde el dispositivo
+- `GET /api/sync/download` — descargar registros modificados desde una fecha
+- `DELETE /api/sync/:tipo/:id` — soft delete de un registro (`tipo`: `campana`, `pot` o `ensayo`)
+
+#### Body de upload
+
+```json
+{
+  "campanas": [...],
+  "pots": [...],
+  "ensayos": [...],
+  "deviceId": "string"
+}
 ```
 
-## Deployment
+#### Query params de download
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Parámetro | Tipo | Descripción |
+|---|---|---|
+| `since` | number | Timestamp Unix en ms. Devuelve registros modificados desde esa fecha |
+| `deviceId` | string | ID del dispositivo. Excluye registros originados en ese dispositivo |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Arquitectura
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+El servidor está organizado con módulos NestJS en `src/sync` y proveedores compartidos en `src/common`.
+
+- `sync`: controlador, servicio y tipos de la sincronización
+- `common/guards`: `ApiKeyGuard` para autenticación por header
+- `common/interceptors`: `LoggingInterceptor` para logging de requests HTTP
+- `common/filters`: `AllExceptionsFilter` para manejo global de errores
+- `entities`: entidades TypeORM (`Campana`, `POT`, `Ensayo`)
+
+## Estructura principal
+
+```text
+src/
+  app.module.ts
+  main.ts
+  common/
+    filters/
+    guards/
+    interceptors/
+  entities/
+  sync/
+test/
+  app.e2e-spec.ts
+  jest-e2e.json
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Notas
 
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- La configuración de TypeORM se carga desde `.env` usando `@nestjs/config`.
+- El soft delete marca `deletedAt` y `syncedAt` en el registro y propaga en cascada a hijos.
+- `fechaMod` es un timestamp Unix en ms que controla la versión del registro en el dispositivo.
