@@ -51,7 +51,6 @@ export class SyncService {
     const campanas = await this.campanaRepo
       .createQueryBuilder('c')
       .where('c.syncedAt > :since', { since: sinceDate })
-      .andWhere(deviceId ? 'c.deviceId != :deviceId' : '1=1', { deviceId })
       .getMany();
 
     const potIds = campanas.map(c => c.id);
