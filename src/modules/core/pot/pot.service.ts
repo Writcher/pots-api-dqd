@@ -20,7 +20,7 @@ export class PotService {
       if (existente) {
         await this.repo.update(id, { ...datos, syncedAt: now });
       } else {
-        await this.repo.save({ ...datos, syncedAt: now } as POT);
+        await this.repo.save({ id, ...datos, syncedAt: now } as POT);
       }
     }
     return items.length;

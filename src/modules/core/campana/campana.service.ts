@@ -20,7 +20,7 @@ export class CampanaService {
       if (existente) {
         await this.repo.update(id, { ...datos, deviceId, syncedAt: now });
       } else {
-        await this.repo.save({ ...datos, deviceId, syncedAt: now } as Campana);
+        await this.repo.save({ id, ...datos, deviceId, syncedAt: now } as Campana);
       }
     }
     return items.length;

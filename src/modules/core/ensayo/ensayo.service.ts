@@ -18,7 +18,7 @@ export class EnsayoService {
       if (existente) {
         await this.repo.update(id, { ...datos, syncedAt: now });
       } else {
-        await this.repo.save({ ...datos, syncedAt: now } as Ensayo);
+        await this.repo.save({ id, ...datos, syncedAt: now } as Ensayo);
       }
     }
     return items.length;
