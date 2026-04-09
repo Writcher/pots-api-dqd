@@ -81,6 +81,12 @@ export class POT {
   relojCal: string;
 
   @Column({ nullable: true })
+  relojSerie2!: string;
+
+  @Column({ nullable: true })
+  relojCal2!: string;
+
+  @Column({ nullable: true })
   obs: string;
 
   @Column({ type: 'bigint' })

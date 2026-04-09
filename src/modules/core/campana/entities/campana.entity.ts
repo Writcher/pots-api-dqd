@@ -87,6 +87,12 @@ export class Campana {
   @Column({ nullable: true })
   relojCal: string;
 
+  @Column({ nullable: true })
+  relojSerie2: string;
+
+  @Column({ nullable: true })
+  relojCal2: string;
+
   @Column({ type: 'bigint' })
   fechaMod: number;
 
