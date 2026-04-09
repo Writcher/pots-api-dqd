@@ -57,6 +57,9 @@ export class Campana {
   @Column({ nullable: true })
   logoCliente: string;
 
+  @Column({ default: 'Hincado Directo' })
+  tipoHincado: string;
+
   @Column({ default: 'No usa' })
   secLatComp: string;
 
