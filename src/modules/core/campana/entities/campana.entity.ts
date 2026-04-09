@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, UpdateDateColumn } from 'typeorm';
-import { POT } from './pot.entity';
+import { POT } from '../../pot/entities/pot.entity';
 
 @Entity('campanas')
 export class Campana {

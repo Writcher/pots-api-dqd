@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Campana } from './entities/campana.entity';
-import { POT } from './entities/pot.entity';
-import { Ensayo } from './entities/ensayo.entity';
-import { SyncModule } from './sync/sync.module';
+import { SyncModule } from './modules/features/sync/sync.module';
 
 @Module({
   imports: [
@@ -21,10 +18,10 @@ import { SyncModule } from './sync/sync.module';
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
-        entities: [Campana, POT, Ensayo],
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
         options: {
-          encrypt: false, 
+          encrypt: false,
           trustServerCertificate: true,
         },
       }),

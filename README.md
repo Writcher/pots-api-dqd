@@ -93,13 +93,16 @@ Base path: `/api/sync`
 
 ## Arquitectura
 
-El servidor está organizado con módulos NestJS en `src/sync` y proveedores compartidos en `src/common`.
+El servidor está organizado con módulos NestJS en `src/modules` y proveedores compartidos en `src/common`.
 
-- `sync`: controlador, servicio y tipos de la sincronización
+- `modules/core`: módulos por entidad, cada uno con su service y entity
+  - `campana`: upsert, lectura y soft delete con cascada a POTs
+  - `pot`: upsert, lectura y soft delete con cascada a ensayos
+  - `ensayo`: upsert, lectura y soft delete
+- `modules/features/sync`: controlador, servicio orquestador y tipos de sincronización
 - `common/guards`: `ApiKeyGuard` para autenticación por header
 - `common/interceptors`: `LoggingInterceptor` para logging de requests HTTP
 - `common/filters`: `AllExceptionsFilter` para manejo global de errores
-- `entities`: entidades TypeORM (`Campana`, `POT`, `Ensayo`)
 
 ## Estructura principal
 
@@ -111,8 +114,17 @@ src/
     filters/
     guards/
     interceptors/
-  entities/
-  sync/
+  modules/
+    core/
+      campana/
+        entities/
+      pot/
+        entities/
+      ensayo/
+        entities/
+    features/
+      sync/
+        types/
 test/
   app.e2e-spec.ts
   jest-e2e.json

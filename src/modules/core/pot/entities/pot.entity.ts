@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { Campana } from './campana.entity';
-import { Ensayo } from './ensayo.entity';
+import { Ensayo } from '../../ensayo/entities/ensayo.entity';
+import { Campana } from '../../campana/entities/campana.entity';
 
 @Entity('pots')
 export class POT {

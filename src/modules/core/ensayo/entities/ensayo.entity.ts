@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { POT } from './pot.entity';
+import { POT } from '../../pot/entities/pot.entity';
 
 @Entity('ensayos')
 export class Ensayo {

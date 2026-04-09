@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Query, UseGuards, Delete, Param } from '@nestjs/common';
-import { ApiKeyGuard } from '../common/guards/api-key.guard';
+import { ApiKeyGuard } from '../../../common/guards/api-key.guard';
 import { SyncService } from './sync.service';
-import type { UploadPayload } from './sync.types';
+import type { UploadPayload } from './types/sync.types';
 
 @Controller('sync')
 @UseGuards(ApiKeyGuard)
