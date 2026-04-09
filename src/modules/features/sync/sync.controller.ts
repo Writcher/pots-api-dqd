@@ -14,14 +14,8 @@ export class SyncController {
   }
 
   @Get('download')
-  download(
-    @Query('since') since?: string,
-    @Query('deviceId') deviceId?: string,
-  ) {
-    return this.syncService.download(
-      since ? parseInt(since) : undefined,
-      deviceId,
-    );
+  download(@Query('since') since?: string) {
+    return this.syncService.download(since ? parseInt(since) : undefined);
   }
 
   @Delete(':tipo/:id')

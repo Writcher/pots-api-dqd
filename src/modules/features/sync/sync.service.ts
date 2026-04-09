@@ -26,10 +26,10 @@ export class SyncService {
     return { ok: true, syncedAt: now, results };
   }
 
-  async download(since?: number, deviceId?: string) {
+  async download(since?: number) {
     const sinceDate = since ? new Date(since) : new Date(0);
 
-    const campanas = await this.campanaService.findSince(sinceDate, deviceId);
+    const campanas = await this.campanaService.findSince(sinceDate);
     const pots     = await this.potService.findByCampanaIds(campanas.map(c => c.id));
     const ensayos  = await this.ensayoService.findByPotIds(pots.map(p => p.id));
 

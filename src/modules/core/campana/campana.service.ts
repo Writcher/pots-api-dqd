@@ -26,11 +26,10 @@ export class CampanaService {
     return items.length;
   }
 
-  async findSince(since: Date, deviceId?: string): Promise<Campana[]> {
+  async findSince(since: Date): Promise<Campana[]> {
     return this.repo
       .createQueryBuilder('c')
       .where('c.syncedAt > :since', { since })
-      .andWhere(deviceId ? 'c.deviceId != :deviceId' : '1=1', { deviceId })
       .getMany();
   }
 
