@@ -60,6 +60,12 @@ export class Campana {
   @Column({ type: 'float' })
   saturacionLitros!: number;
 
+  @Column({ type: 'float', default: 60 })
+  tiempoElastico!: number;
+
+  @Column({ type: 'float', default: 60 })
+  tiempoPlastico!: number;
+
   @Column({ type: 'float' })
   longitudMotor!: number;
 
