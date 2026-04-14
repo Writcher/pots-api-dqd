@@ -8,7 +8,7 @@ import { PotService } from '../pot/pot.service';
 export class CampanaService {
 
   constructor(
-    @InjectRepository(Campana) private repo: Repository<Campana>,
+    @InjectRepository(Campana) private campanaRepository: Repository<Campana>,
     private potService: PotService,
   ) {}
 
@@ -16,18 +16,18 @@ export class CampanaService {
     const now = new Date();
     for (const item of items) {
       const { id, ...datos } = item;
-      const existente = id ? await this.repo.findOne({ where: { id } }) : null;
+      const existente = id ? await this.campanaRepository.findOne({ where: { id } }) : null;
       if (existente) {
-        await this.repo.update(id, { ...datos, deviceId, syncedAt: now });
+        await this.campanaRepository.update(id, { ...datos, deviceId, syncedAt: now });
       } else {
-        await this.repo.save({ id, ...datos, deviceId, syncedAt: now } as Campana);
+        await this.campanaRepository.save({ id, ...datos, deviceId, syncedAt: now } as Campana);
       }
     }
     return items.length;
   }
 
   async findSince(since: Date): Promise<Campana[]> {
-    return this.repo
+    return this.campanaRepository
       .createQueryBuilder('c')
       .where('c.syncedAt > :since', { since })
       .getMany();
@@ -35,7 +35,7 @@ export class CampanaService {
 
   async softDelete(id: number): Promise<void> {
     const now = new Date();
-    await this.repo.update(id, { deletedAt: now, syncedAt: now });
+    await this.campanaRepository.update(id, { deletedAt: now, syncedAt: now });
     await this.potService.softDeleteByCampanaId(id);
   }
 }

@@ -3,24 +3,39 @@ import { PotService } from '../../core/pot/pot.service';
 import { EnsayoService } from '../../core/ensayo/ensayo.service';
 import { UploadPayload } from './types/sync.types';
 import { CampanaService } from 'src/modules/core/campana/campana.service';
+import { CampanaTipoEnsayoService } from 'src/modules/core/campana-tipo-ensayo/campana-tipo-ensayo.service';
+import { EstadoCampanaService } from 'src/modules/core/estado-campana/estado-campana.service';
+import { EstadoPotService } from 'src/modules/core/estado-pot/estado-pot.service';
+import { TipoEnsayoService } from 'src/modules/core/tipo-ensayo/tipo-ensayo.service';
+import { TipoCargaService } from 'src/modules/core/tipo-carga/tipo-carga.service';
+import { TipoHincadoService } from 'src/modules/core/tipo-hincado/tipo-hincado.service';
+import { PerfilService } from 'src/modules/core/perfil/perfil.service';
 
 @Injectable()
 export class SyncService {
 
   constructor(
     private campanaService: CampanaService,
+    private campanaTipoEnsayoService: CampanaTipoEnsayoService,
     private potService: PotService,
     private ensayoService: EnsayoService,
-  ) {}
+    private estadoCampanaService: EstadoCampanaService,
+    private estadoPotService: EstadoPotService,
+    private tipoEnsayoService: TipoEnsayoService,
+    private tipoCargaService: TipoCargaService,
+    private tipoHincadoService: TipoHincadoService,
+    private perfilService: PerfilService
+  ) { }
 
   async upload(payload: UploadPayload) {
-    const { campanas, pots, ensayos, deviceId } = payload;
+    const { campanas, campanaTipoEnsayo, pots, ensayos, deviceId } = payload;
     const now = new Date();
 
     const results = {
       campanas: await this.campanaService.upsert(campanas, deviceId),
-      pots:     await this.potService.upsert(pots),
-      ensayos:  await this.ensayoService.upsert(ensayos),
+      campanaTipoEnsayo: await this.campanaTipoEnsayoService.upsert(campanaTipoEnsayo),
+      pots: await this.potService.upsert(pots),
+      ensayos: await this.ensayoService.upsert(ensayos),
     };
 
     return { ok: true, syncedAt: now, results };
@@ -30,16 +45,35 @@ export class SyncService {
     const sinceDate = since ? new Date(since) : new Date(0);
 
     const campanas = await this.campanaService.findSince(sinceDate);
-    const pots     = await this.potService.findByCampanaIds(campanas.map(c => c.id));
-    const ensayos  = await this.ensayoService.findByPotIds(pots.map(p => p.id));
+    const campanaIds = campanas.map(c => c.id);
+    const campanaTipoEnsayo = await this.campanaTipoEnsayoService.findByCampanaIds(campanaIds);
+    const pots = await this.potService.findByCampanaIds(campanaIds);
+    const ensayos = await this.ensayoService.findByPotIds(pots.map(p => p.id));
 
-    return { campanas, pots, ensayos, timestamp: Date.now() };
+    return { campanas, campanaTipoEnsayo, pots, ensayos, timestamp: Date.now() };
+  }
+
+  async catalogos() {
+    const [estadosCampana, estadosPot, tiposEnsayo, tiposCarga, tiposHincado, perfiles] =
+      await Promise.all([
+        this.estadoCampanaService.findAll(),
+        this.estadoPotService.findAll(),
+        this.tipoEnsayoService.findAll(),
+        this.tipoCargaService.findAll(),
+        this.tipoHincadoService.findAll(),
+        this.perfilService.findAll(),
+      ]);
+
+    return { estadosCampana, estadosPot, tiposEnsayo, tiposCarga, tiposHincado, perfiles };
   }
 
   async softDelete(tipo: 'campana' | 'pot' | 'ensayo', id: number) {
-    if (tipo === 'campana') await this.campanaService.softDelete(id);
-    if (tipo === 'pot')     await this.potService.softDelete(id);
-    if (tipo === 'ensayo')  await this.ensayoService.softDelete(id);
+    if (tipo === 'campana') {
+      await this.campanaTipoEnsayoService.softDeleteByCampanaId(id);
+      await this.campanaService.softDelete(id);
+    }
+    if (tipo === 'pot') await this.potService.softDelete(id);
+    if (tipo === 'ensayo') await this.ensayoService.softDelete(id);
     return { ok: true };
   }
 }

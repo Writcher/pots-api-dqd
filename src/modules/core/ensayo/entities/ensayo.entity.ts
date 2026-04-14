@@ -1,54 +1,59 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { POT } from '../../pot/entities/pot.entity';
+import { TipoCarga } from '../../tipo-carga/entities/tipo-carga.entity';
 
-@Entity('ensayos')
+@Entity('ensayo')
 export class Ensayo {
   @PrimaryColumn({ type: 'int' })
-  id: number;
+  id!: number;
 
   @Column()
-  potId: number;
+  potId!: number;
 
   @ManyToOne(() => POT, pot => pot.ensayos)
   @JoinColumn({ name: 'potId' })
-  pot: POT;
+  pot!: POT;
 
   @Column()
-  campanaId: number;
+  tipoCargaId!: number;
+
+  @ManyToOne(() => TipoCarga)
+  @JoinColumn({ name: 'tipoCargaId' })
+  tipoCarga!: TipoCarga;
 
   @Column()
-  tipoCarga: string;
-
-  @Column()
-  numeroEscalon: number;
+  escalon!: number;
 
   @Column({ type: 'float' })
-  porcentajeCarga: number;
+  porcentajeCarga!: number;
 
   @Column({ type: 'float' })
-  cargaTeorica: number;
+  cargaTeorica!: number;
 
   @Column({ type: 'float', nullable: true })
-  cargaReal: number;
+  cargaReal!: number;
 
   @Column({ type: 'float', nullable: true })
-  defElR1: number;
+  elasticoR1!: number;
 
   @Column({ type: 'float', nullable: true })
-  defElR2: number;
+  elasticoR2!: number;
 
   @Column({ type: 'float', nullable: true })
-  defPlR1: number;
+  plasticoR1!: number;
 
   @Column({ type: 'float', nullable: true })
-  defPlR2: number;
+  plasticoR2!: number;
 
-  @Column({ nullable: true })
-  fechaEnsayo: string;
+  @Column({ type: 'datetime', nullable: true })
+  fechaEnsayo!: Date;
 
-  @Column({ nullable: true })
-  syncedAt: Date;
+  @Column({ type: 'datetime', nullable: true })
+  modifiedAt!: Date;
 
-  @Column({ nullable: true })
-  deletedAt: Date;
+  @Column({ type: 'datetime', nullable: true })
+  syncedAt!: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  deletedAt!: Date;
 }

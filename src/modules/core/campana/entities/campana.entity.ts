@@ -1,110 +1,110 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { EstadoCampana } from '../../estado-campana/entities/estado-campana.entity';
 import { POT } from '../../pot/entities/pot.entity';
+import { CampanaTipoEnsayo } from '../../campana-tipo-ensayo/entities/campana-tipo-ensayo.entity';
+import { Perfil } from '../../perfil/entities/perfil.entity';
 
-@Entity('campanas')
+@Entity('campana')
 export class Campana {
   @PrimaryColumn({ type: 'int' })
-  id: number;
+  id!: number;
 
   @Column({ nullable: true })
-  deviceId: string; // ID del dispositivo que creó la campaña
+  deviceId!: string;
 
   @Column()
-  cliente: string;
+  cliente!: string;
 
   @Column()
-  proyecto: string;
+  proyecto!: string;
 
   @Column()
-  numeroCampana: string;
+  numero!: string;
 
   @Column({ nullable: true })
-  fechaInicio: string;
+  fechaInicio!: string;
 
-  @Column({ default: 'Activa' })
-  estado: string;
+  @Column()
+  estadoCampanaId!: number;
 
-  @Column({ type: 'float', default: 25 })
-  limLateral: number;
+  @ManyToOne(() => EstadoCampana)
+  @JoinColumn({ name: 'estadoCampanaId' })
+  estadoCampana!: EstadoCampana;
 
-  @Column({ type: 'float', default: 15 })
-  limCompresion: number;
+  @Column({ type: 'float' })
+  limiteLateral!: number;
 
-  @Column({ type: 'float', default: 15 })
-  limTraccion: number;
+  @Column({ type: 'float' })
+  limiteCompresion!: number;
 
-  @Column({ type: 'float', default: 200 })
-  pctRechazo: number;
-
-  @Column({ type: 'float', default: 20 })
-  litros: number;
-
-  @Column({ type: 'float', default: 4.0 })
-  longMotor: number;
-
-  @Column({ type: 'float', default: 3.5 })
-  longEstandar: number;
+  @Column({ type: 'float' })
+  limiteTraccion!: number;
 
   @Column({ nullable: true })
-  nota: string;
+  perfilMotorId!: number;
+
+  @ManyToOne(() => Perfil)
+  @JoinColumn({ name: 'perfilMotorId' })
+  perfilMotor!: Perfil;
 
   @Column({ nullable: true })
-  ref1: string;
+  perfilEstandarId!: number;
+
+  @ManyToOne(() => Perfil)
+  @JoinColumn({ name: 'perfilEstandarId' })
+  perfilEstandar!: Perfil;
+
+  @Column({ type: 'float' })
+  rechazoAnticipadoPct!: number;
+
+  @Column({ type: 'float' })
+  saturacionLitros!: number;
+
+  @Column({ type: 'float' })
+  longitudMotor!: number;
+
+  @Column({ type: 'float' })
+  longitudEstandar!: number;
 
   @Column({ nullable: true })
-  ref2: string;
+  dinamometroSerie!: string;
 
   @Column({ nullable: true })
-  logoCliente: string;
-
-  @Column({ default: 'Hincado Directo' })
-  tipoHincado: string;
-
-  @Column({ default: 'No usa' })
-  secLatComp: string;
-
-  @Column({ default: 'No usa' })
-  secLatTrac: string;
-
-  @Column({ default: 'No usa' })
-  secCompTrac: string;
-
-  @Column({ default: false })
-  soloLateral: boolean;
-
-  @Column({ default: false })
-  soloCompresion: boolean;
-
-  @Column({ default: false })
-  soloTraccion: boolean;
+  dinamometroCalibracion!: string;
 
   @Column({ nullable: true })
-  dinSerie: string;
+  reloj1Serie!: string;
 
   @Column({ nullable: true })
-  dinCal: string;
+  reloj1Calibracion!: string;
 
   @Column({ nullable: true })
-  relojSerie: string;
+  reloj2Serie!: string;
 
   @Column({ nullable: true })
-  relojCal: string;
+  reloj2Calibracion!: string;
 
   @Column({ nullable: true })
-  relojSerie2: string;
+  ref1!: string;
 
   @Column({ nullable: true })
-  relojCal2: string;
-
-  @Column({ type: 'bigint' })
-  fechaMod: number;
+  ref2!: string;
 
   @Column({ nullable: true })
-  syncedAt: Date;
+  nota!: string;
 
-  @Column({ nullable: true })
-  deletedAt: Date;
+  @Column({ type: 'datetime', nullable: true })
+  modifiedAt!: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  syncedAt!: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  deletedAt!: Date;
 
   @OneToMany(() => POT, pot => pot.campana)
-  pots: POT[];
+  pots!: POT[];
+
+  @OneToMany(() => CampanaTipoEnsayo, cte => cte.campana)
+  tiposEnsayo!: CampanaTipoEnsayo[];
 }

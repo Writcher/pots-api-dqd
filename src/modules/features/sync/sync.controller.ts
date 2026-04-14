@@ -18,6 +18,11 @@ export class SyncController {
     return this.syncService.download(since ? parseInt(since) : undefined);
   }
 
+  @Get('catalogos')
+  catalogos() {
+    return this.syncService.catalogos();
+  }
+
   @Delete(':tipo/:id')
   softDelete(
     @Param('tipo') tipo: 'campana' | 'pot' | 'ensayo',

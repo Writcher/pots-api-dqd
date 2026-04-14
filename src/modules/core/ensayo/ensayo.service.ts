@@ -7,18 +7,18 @@ import { Ensayo } from './entities/ensayo.entity';
 export class EnsayoService {
 
   constructor(
-    @InjectRepository(Ensayo) private repo: Repository<Ensayo>,
+    @InjectRepository(Ensayo) private ensayoRepository: Repository<Ensayo>,
   ) {}
 
   async upsert(items: Record<string, any>[]): Promise<number> {
     const now = new Date();
     for (const item of items) {
       const { id, ...datos } = item;
-      const existente = id ? await this.repo.findOne({ where: { id } }) : null;
+      const existente = id ? await this.ensayoRepository.findOne({ where: { id } }) : null;
       if (existente) {
-        await this.repo.update(id, { ...datos, syncedAt: now });
+        await this.ensayoRepository.update(id, { ...datos, syncedAt: now });
       } else {
-        await this.repo.save({ id, ...datos, syncedAt: now } as Ensayo);
+        await this.ensayoRepository.save({ id, ...datos, syncedAt: now } as Ensayo);
       }
     }
     return items.length;
@@ -26,7 +26,7 @@ export class EnsayoService {
 
   async findByPotIds(potIds: number[]): Promise<Ensayo[]> {
     if (!potIds.length) return [];
-    return this.repo
+    return this.ensayoRepository
       .createQueryBuilder('e')
       .where('e.potId IN (:...ids)', { ids: potIds })
       .getMany();
@@ -34,12 +34,12 @@ export class EnsayoService {
 
   async softDelete(id: number): Promise<void> {
     const now = new Date();
-    await this.repo.update(id, { deletedAt: now, syncedAt: now });
+    await this.ensayoRepository.update(id, { deletedAt: now, syncedAt: now });
   }
 
   async softDeleteByPotId(potId: number): Promise<void> {
     const now = new Date();
-    await this.repo
+    await this.ensayoRepository
       .createQueryBuilder()
       .update()
       .set({ deletedAt: now, syncedAt: now })

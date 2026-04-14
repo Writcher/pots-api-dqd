@@ -1,103 +1,108 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Ensayo } from '../../ensayo/entities/ensayo.entity';
 import { Campana } from '../../campana/entities/campana.entity';
+import { Perfil } from '../../perfil/entities/perfil.entity';
+import { TipoEnsayo } from '../../tipo-ensayo/entities/tipo-ensayo.entity';
+import { TipoHincado } from '../../tipo-hincado/entities/tipo-hincado.entity';
+import { EstadoPot } from '../../estado-pot/entities/estado-pot.entity';
 
-@Entity('pots')
+@Entity('pot')
 export class POT {
   @PrimaryColumn({ type: 'int' })
-  id: number;
+  id!: number;
 
   @Column()
-  campanaId: number;
+  campanaId!: number;
 
   @ManyToOne(() => Campana, campana => campana.pots)
   @JoinColumn({ name: 'campanaId' })
-  campana: Campana;
+  campana!: Campana;
 
   @Column()
-  titulo: string;
+  titulo!: string;
 
   @Column()
-  perfil: string;
+  perfilId!: number;
+
+  @ManyToOne(() => Perfil)
+  @JoinColumn({ name: 'perfilId' })
+  perfil!: Perfil;
 
   @Column()
-  tipoCarga: string;
+  tipoEnsayoId!: number;
 
-  @Column({ type: 'float', default: 1.5 })
-  empotramientoIdeal: number;
+  @ManyToOne(() => TipoEnsayo)
+  @JoinColumn({ name: 'tipoEnsayoId' })
+  tipoEnsayo!: TipoEnsayo;
+
+  @Column({ type: 'float' })
+  empotramientoIdeal!: number;
 
   @Column({ default: false })
-  saturacionPrevista: boolean;
+  saturacionPrevista!: boolean;
 
-  @Column({ default: 'Pendiente' })
-  estado: string;
+  @Column()
+  estadoPotId!: number;
 
-  @Column({ nullable: true })
-  motivoRechazo: string;
-
-  @Column({ nullable: true })
-  coordX: string;
+  @ManyToOne(() => EstadoPot)
+  @JoinColumn({ name: 'estadoPotId' })
+  estadoPot!: EstadoPot;
 
   @Column({ nullable: true })
-  coordY: string;
+  motivoRechazo!: string;
+
+  @Column({ nullable: true })
+  coordX!: string;
+
+  @Column({ nullable: true })
+  coordY!: string;
 
   @Column({ type: 'float', nullable: true })
-  longReal: number;
+  longitudHinca!: number;
 
   @Column({ type: 'float', nullable: true })
-  empReal: number;
+  empotramientoReal!: number;
 
   @Column({ default: false })
-  saturado: boolean;
+  saturado!: boolean;
+
+  @Column()
+  tipoHincadoId!: number;
+
+  @ManyToOne(() => TipoHincado)
+  @JoinColumn({ name: 'tipoHincadoId' })
+  tipoHincado!: TipoHincado;
 
   @Column({ type: 'float', nullable: true })
-  t05: number;
+  t05!: number;
 
   @Column({ type: 'float', nullable: true })
-  t10: number;
+  t10!: number;
 
   @Column({ type: 'float', nullable: true })
-  t15: number;
+  t15!: number;
 
   @Column({ type: 'float', nullable: true })
-  t20: number;
+  t20!: number;
 
   @Column({ type: 'float', nullable: true })
-  t25: number;
+  t25!: number;
 
   @Column({ type: 'float', nullable: true })
-  t30: number;
+  t30!: number;
 
   @Column({ nullable: true })
-  dinSerie: string;
+  observacion!: string;
 
-  @Column({ nullable: true })
-  dinCal: string;
+  @Column({ type: 'datetime', nullable: true })
+  modifiedAt!: Date;
 
-  @Column({ nullable: true })
-  relojSerie: string;
+  @Column({ type: 'datetime', nullable: true })
+  syncedAt!: Date;
 
-  @Column({ nullable: true })
-  relojCal: string;
-
-  @Column({ nullable: true })
-  relojSerie2!: string;
-
-  @Column({ nullable: true })
-  relojCal2!: string;
-
-  @Column({ nullable: true })
-  obs: string;
-
-  @Column({ type: 'bigint' })
-  fechaMod: number;
-
-  @Column({ nullable: true })
-  syncedAt: Date;
-
-  @Column({ nullable: true })
-  deletedAt: Date;
+  @Column({ type: 'datetime', nullable: true })
+  deletedAt!: Date;
 
   @OneToMany(() => Ensayo, ensayo => ensayo.pot)
-  ensayos: Ensayo[];
+  ensayos!: Ensayo[];
 }
