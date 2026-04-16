@@ -35,4 +35,17 @@ export class PerfilService implements OnModuleInit {
   findByTipo(tipo: string): Promise<Perfil[]> {
     return this.prefilRepository.find({ where: { tipo: tipo } });
   }
+
+  async upsertPerfiles(items: Record<string, any>[]): Promise<number> {
+    for (const item of items) {
+      // Buscar si ya existe un perfil con el mismo nombre y tipo
+      const existente = await this.prefilRepository.findOne({
+        where: { nombre: item.nombre, tipo: item.tipo },
+      });
+      if (!existente) {
+        await this.prefilRepository.save(item as Perfil);
+      }
+    }
+    return items.length;
+  }
 }

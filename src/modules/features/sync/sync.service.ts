@@ -28,8 +28,13 @@ export class SyncService {
   ) { }
 
   async upload(payload: UploadPayload) {
-    const { campanas, campanaTipoEnsayo, pots, ensayos, deviceId } = payload;
+    const { campanas, campanaTipoEnsayo, pots, ensayos, perfiles, deviceId } = payload;
     const now = new Date();
+
+    // Perfiles primero (otros registros pueden referenciarlos)
+    if (perfiles?.length) {
+      await this.perfilService.upsertPerfiles(perfiles);
+    }
 
     const results = {
       campanas: await this.campanaService.upsert(campanas, deviceId),

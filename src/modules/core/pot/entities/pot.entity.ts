@@ -95,6 +95,9 @@ export class POT {
   observacion!: string;
 
   @Column({ type: 'datetime', nullable: true })
+  fechaRealizacion!: Date;
+
+  @Column({ type: 'datetime', nullable: true })
   modifiedAt!: Date;
 
   @Column({ type: 'datetime', nullable: true })
