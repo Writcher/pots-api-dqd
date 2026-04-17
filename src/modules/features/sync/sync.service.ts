@@ -27,6 +27,21 @@ export class SyncService {
     private perfilService: PerfilService
   ) { }
 
+  // Convierte strings vacíos a null en campos de fecha conocidos
+  // (MSSQL rechaza '' como fecha)
+  private sanearFechas(items: Record<string, any>[]): Record<string, any>[] {
+    const camposFecha = ['fechaEnsayo', 'fechaRealizacion', 'modifiedAt', 'syncedAt', 'deletedAt'];
+    return items.map(item => {
+      const clean = { ...item };
+      for (const campo of camposFecha) {
+        if (clean[campo] === '' || clean[campo] === undefined) {
+          clean[campo] = null;
+        }
+      }
+      return clean;
+    });
+  }
+
   async upload(payload: UploadPayload) {
     const { campanas, campanaTipoEnsayo, pots, ensayos, perfiles, deviceId } = payload;
     const now = new Date();
@@ -37,10 +52,10 @@ export class SyncService {
     }
 
     const results = {
-      campanas: await this.campanaService.upsert(campanas, deviceId),
-      campanaTipoEnsayo: await this.campanaTipoEnsayoService.upsert(campanaTipoEnsayo),
-      pots: await this.potService.upsert(pots),
-      ensayos: await this.ensayoService.upsert(ensayos),
+      campanas: await this.campanaService.upsert(this.sanearFechas(campanas), deviceId),
+      campanaTipoEnsayo: await this.campanaTipoEnsayoService.upsert(this.sanearFechas(campanaTipoEnsayo)),
+      pots: await this.potService.upsert(this.sanearFechas(pots)),
+      ensayos: await this.ensayoService.upsert(this.sanearFechas(ensayos)),
     };
 
     return { ok: true, syncedAt: now, results };
