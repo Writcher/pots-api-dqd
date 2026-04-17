@@ -27,15 +27,24 @@ export class SyncService {
     private perfilService: PerfilService
   ) { }
 
-  // Convierte strings vacíos a null en campos de fecha conocidos
-  // (MSSQL rechaza '' como fecha)
+  // Convierte strings vacíos a null y DD/MM/AAAA a ISO en campos de fecha
   private sanearFechas(items: Record<string, any>[]): Record<string, any>[] {
     const camposFecha = ['fechaEnsayo', 'fechaRealizacion', 'modifiedAt', 'syncedAt', 'deletedAt'];
     return items.map(item => {
       const clean = { ...item };
       for (const campo of camposFecha) {
-        if (clean[campo] === '' || clean[campo] === undefined) {
+        const v = clean[campo];
+        if (v === '' || v === undefined) {
           clean[campo] = null;
+          continue;
+        }
+        if (typeof v === 'string') {
+          // DD/MM/AAAA → ISO
+          const match = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+          if (match) {
+            const [, d, m, y] = match;
+            clean[campo] = new Date(`${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}T00:00:00.000Z`).toISOString();
+          }
         }
       }
       return clean;
